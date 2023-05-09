@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:task3/screens/employee_list_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:task3/db/dataabase_helper.dart';
+
+import 'package:task3/models/employee.dart';
 
 class UpdateEmployeeScreen extends StatefulWidget {
-  const UpdateEmployeeScreen({Key? key}) : super(key: key);
+  final Employee employee;
+  const UpdateEmployeeScreen({Key? key, required this.employee})
+      : super(key: key);
 
   @override
   State<UpdateEmployeeScreen> createState() => _UpdateEmployeeScreenState();
@@ -22,7 +27,7 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Employee'),
+        title: Text('Update Employee'),
       ),
       body: Padding(
         padding: EdgeInsets.all(10.0),
@@ -44,7 +49,7 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide name';
                       }
-                      name = text!;
+                      name = text;
                       return null;
                     }),
                 SizedBox(
@@ -63,7 +68,7 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide Emp ID';
                       }
-                      EmployeeID = text!;
+                      EmployeeID = text;
                       return null;
                     }),
                 SizedBox(
@@ -81,7 +86,7 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide Department';
                       }
-                      Department = text!;
+                      Department = text;
                       return null;
                     }),
                 SizedBox(
@@ -100,7 +105,7 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide Salary';
                       }
-                      Salary = text!;
+                      Salary = text;
                       return null;
                     }),
                 SizedBox(
@@ -119,31 +124,40 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide a Contact Number';
                       }
-                      ContactNo = text!;
+                      ContactNo = text;
                       return null;
                     }),
                 SizedBox(
                   height: 15,
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
+                      Employee e = Employee(
+                        name: name,
+                        EmpId: int.parse(EmployeeID),
+                        Department: Department,
+                        Salary: int.parse(Salary),
+                        ContactNo: int.parse(ContactNo),
+                      );
+                      int result =
+                          await DatabaseHelper.instance.updateEmployee(e);
+
+                      if (result > 0) {
+                        Fluttertoast.showToast(
+                            msg: "Record Update",
+                            backgroundColor: Colors.green);
+                        Navigator.pop(context, 'done');
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Updating Failed",
+                            backgroundColor: Colors.red);
+                      }
                       //Save record in DB table
                     }
                   },
                   child: Text('Update'),
                 ),
-                /* ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return EmployeeListScreen();
-                        },
-                      ),
-                    );
-                  },
-                  child: Text('View All'),*/
               ],
             ),
           ),

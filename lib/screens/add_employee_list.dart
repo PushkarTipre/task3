@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:task3/db/dataabase_helper.dart';
+import 'package:task3/models/employee.dart';
 import 'package:task3/screens/employee_list_screen.dart';
 
 class AddEmployeeScreen extends StatefulWidget {
@@ -38,7 +41,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide name';
                       }
-                      name = text!;
+                      name = text;
                       return null;
                     }),
                 SizedBox(
@@ -57,7 +60,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide Emp ID';
                       }
-                      EmployeeID = text!;
+                      EmployeeID = text;
                       return null;
                     }),
                 SizedBox(
@@ -75,7 +78,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide Department';
                       }
-                      Department = text!;
+                      Department = text;
                       return null;
                     }),
                 SizedBox(
@@ -94,7 +97,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide Salary';
                       }
-                      Salary = text!;
+                      Salary = text;
                       return null;
                     }),
                 SizedBox(
@@ -113,16 +116,34 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       if (text == null || text.isEmpty) {
                         return 'Please provide a Contact Number';
                       }
-                      ContactNo = text!;
+                      ContactNo = text;
                       return null;
                     }),
                 SizedBox(
                   height: 15,
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      //Save record in DB table
+                      Employee e = Employee(
+                        name: name,
+                        EmpId: int.parse(EmployeeID),
+                        Department: Department,
+                        Salary: int.parse(Salary),
+                        ContactNo: int.parse(ContactNo),
+                      );
+
+                      int result =
+                          await DatabaseHelper.instance.insertEmployee(e);
+
+                      if (result > 0) {
+                        Fluttertoast.showToast(
+                            msg: "record saved", backgroundColor: Colors.green);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "record not saved",
+                            backgroundColor: Colors.green);
+                      }
                     }
                   },
                   child: Text('Save'),
